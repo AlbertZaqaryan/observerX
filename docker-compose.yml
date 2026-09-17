@@ -1,0 +1,61 @@
+# ============================================================================
+#  observerX_ai — a web platform for the Qwen3.8-27B Heretic (GGUF) model.
+#
+#  Services:
+#    downloader  one-shot: fetches the GGUF weights + vision projector from HF
+#    llama       llama.cpp OpenAI-compatible inference server
+#    backend     FastAPI gateway (audio/document processing + streaming)
+#    web         nginx serving the chat UI and proxying the API
+#
+#  Usage:  cp .env.example .env  &&  docker compose up --build
+# ============================================================================
+
+services:
+  downloader:
+    build: ./downloader
+    env_file: .env
+    volumes:
+      - models:/models
+    restart: "no"
+
+  llama:
+    image: ghcr.io/ggml-org/llama.cpp:server
+    env_file: .env
+    entrypoint: ["/bin/sh", "/llama-entrypoint.sh"]
+    volumes:
+      - models:/models
+      - ./llama/entrypoint.sh:/llama-entrypoint.sh:ro
+    expose:
+      - "8080"
+    depends_on:
+      downloader:
+        condition: service_completed_successfully
+    restart: unless-stopped
+
+  backend:
+    build: ./backend
+    env_file: .env
+    environment:
+      LLAMA_URL: http://llama:8080
+    volumes:
+      - backend_cache:/root/.cache
+    expose:
+      - "8000"
+    depends_on:
+      - llama
+    restart: unless-stopped
+
+  web:
+    image: nginx:alpine
+    volumes:
+      - ./frontend:/usr/share/nginx/html:ro
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    ports:
+      - "${WEB_PORT:-3000}:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  models:
+  backend_cache:
