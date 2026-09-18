@@ -19,7 +19,7 @@ services:
     restart: "no"
 
   llama:
-    image: ghcr.io/ggml-org/llama.cpp:server
+    image: ghcr.io/ggml-org/llama.cpp:server-cuda
     env_file: .env
     entrypoint: ["/bin/sh", "/llama-entrypoint.sh"]
     gpus: all
