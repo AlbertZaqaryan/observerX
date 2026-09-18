@@ -22,6 +22,7 @@ services:
     image: ghcr.io/ggml-org/llama.cpp:server
     env_file: .env
     entrypoint: ["/bin/sh", "/llama-entrypoint.sh"]
+    gpus: all
     volumes:
       - models:/models
       - ./llama/entrypoint.sh:/llama-entrypoint.sh:ro
