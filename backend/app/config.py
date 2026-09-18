@@ -15,6 +15,7 @@ MODEL_DISPLAY_NAME = os.environ.get(
 )
 SYSTEM_PROMPT = os.environ.get(
     "SYSTEM_PROMPT",
+    "/no_think",
     "You are a helpful, knowledgeable assistant. Answer clearly and concisely in English.",
 ).strip()
 
@@ -27,7 +28,7 @@ MAX_UPLOAD_BYTES = MAX_UPLOAD_MB * 1024 * 1024
 
 # Generation defaults.
 DEFAULT_TEMPERATURE = float(os.environ.get("DEFAULT_TEMPERATURE", "0.7"))
-DEFAULT_MAX_TOKENS = int(os.environ.get("DEFAULT_MAX_TOKENS", "1024"))
+DEFAULT_MAX_TOKENS = int(os.environ.get("DEFAULT_MAX_TOKENS", "4096"))
 
 # Largest edge (px) an image is downscaled to before being sent to the model.
 IMAGE_MAX_EDGE = int(os.environ.get("IMAGE_MAX_EDGE", "1536"))

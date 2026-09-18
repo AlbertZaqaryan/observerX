@@ -14,6 +14,9 @@ MMPROJ_FILE="${MMPROJ_HF_FILE:-mmproj-Qwen3.8-27B-Q8_0.gguf}"
 
 set -- -m "/models/${MODEL_FILE}" \
     --host 0.0.0.0 --port 8080 \
+    --reasoning-budget 0 \
+    --repeat-penalty 1.15 \
+    --n-predict 2048 \
     -c "${LLAMA_CTX:-8192}" \
     -ngl "${LLAMA_NGL:-0}" \
     --jinja
